@@ -1,6 +1,6 @@
-import Tabular from "./Tabular";
+import {Tabular} from "./Tabular";
 
-export default class BinaryTable extends Tabular {
+export class BinaryTable extends Tabular {
 
     // Look up table for matching appropriate typed array
     typedArray = {

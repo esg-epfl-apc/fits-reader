@@ -1,8 +1,8 @@
 export class HeaderVerify {
 
-    constructor() {
+    constructor(primary) {
         this.cardIndex = 0;
-        this.primary = false;
+        this.primary = primary;
         this.extension = false;
         this.extensionType = null;
     }
@@ -30,12 +30,25 @@ export class HeaderVerify {
     }
 
     XTENSION(value) {
+        console.log("EXTENSION TYPE HF");
+        console.log(value);
         this.extension = true;
         this.extensionType = value;
         this.verifyOrder("XTENSION", 0);
 
         return this.extensionType;
     }
+
+    /*
+    XTENSION: function(...args) {
+                console.log("Args");
+                console.log(arguments)
+
+                this.extension = true;
+                this.extensionType = arguments[0];
+                this.verifyOrder("XTENSION", 0);
+                return this.extensionType;
+     */
 
     BITPIX(value) {
         const key = "BITPIX";
@@ -47,14 +60,13 @@ export class HeaderVerify {
         return value;
     }
 
-    /*
     NAXIS(value, array) {
         const key = "NAXIS";
         value = parseInt(value);
         if (!array) {
             this.verifyOrder(key, 2);
             this.verifyBetween(key, value, 0, 999);
-            if (this.isExtension()) {
+            if (this.extension) {
                 if (["TABLE", "BINTABLE"].includes(this.extensionType)) {
                     const required = 2;
                     if (value !== required) {
@@ -65,8 +77,8 @@ export class HeaderVerify {
         }
         return value;
     }
-    */
 
+    /*
     NAXIS(value, array) {
         const key = "NAXIS";
         value = parseInt(value);
@@ -76,14 +88,14 @@ export class HeaderVerify {
         }
         return value;
     }
+    */
 
-    /*
     PCOUNT(value) {
         const key = "PCOUNT";
         value = parseInt(value);
         const order = 1 + 1 + 1 + this.NAXIS();
         this.verifyOrder(key, order);
-        if (this.isExtension()) {
+        if (this.extension) {
             if (["IMAGE", "TABLE"].includes(this.extensionType)) {
                 const required = 0;
                 if (value !== required) {
@@ -93,31 +105,14 @@ export class HeaderVerify {
         }
         return value;
     }
-    */
 
+    /*
     PCOUNT(value) {
         const key = "PCOUNT";
         value = parseInt(value);
         const order = 1 + 1 + 1 + this.NAXIS();
         this.verifyOrder(key, order);
 
-        return value;
-    }
-
-    /*
-    GCOUNT(value, isExtension) {
-        const key = "GCOUNT";
-        value = parseInt(value);
-        const order = 1 + 1 + 1 + this.NAXIS() + 1;
-        this.verifyOrder(key, order);
-        if (isExtension) {
-            if (["IMAGE", "TABLE", "BINTABLE"].includes(this.extensionType)) {
-                const required = 1;
-                if (value !== required) {
-                    throw `${key} must be ${required} for the ${this.extensionType} extensions`;
-                }
-            }
-        }
         return value;
     }
     */
@@ -127,11 +122,28 @@ export class HeaderVerify {
         value = parseInt(value);
         const order = 1 + 1 + 1 + this.NAXIS() + 1;
         this.verifyOrder(key, order);
-
+        if (this.extension) {
+            if (["IMAGE", "TABLE", "BINTABLE"].includes(this.extensionType)) {
+                const required = 1;
+                if (value !== required) {
+                    throw `${key} must be ${required} for the ${this.extensionType} extensions`;
+                }
+            }
+        }
         return value;
     }
 
     /*
+    GCOUNT(value) {
+        const key = "GCOUNT";
+        value = parseInt(value);
+        const order = 1 + 1 + 1 + this.NAXIS() + 1;
+        this.verifyOrder(key, order);
+
+        return value;
+    }
+    */
+
     EXTEND(value, isPrimary) {
         if (!isPrimary) {
             throw "EXTEND must only appear in the primary header";
@@ -139,11 +151,12 @@ export class HeaderVerify {
 
         return this.verifyBoolean(value);
     }
-    */
 
+    /*
     EXTEND(value) {
         return this.verifyBoolean(value);
     }
+    */
 
     BSCALE(value) {
         return parseFloat(value);

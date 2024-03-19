@@ -39,13 +39,6 @@ export class CompressedImage extends BinaryTable {
         this.zdither = header.get('ZDITHER0') || 0;
         this.ztile = [];
 
-        /*
-        for (i = j = 1, ref = this.znaxis; (1 <= ref ? j <= ref : j >= ref); i = 1 <= ref ? ++j : --j) {
-            ztile = header.contains(`ZTILE${i}`) ? header.get(`ZTILE${i}`) : i === 1 ? header.get("ZNAXIS1") : 1;
-            this.ztile.push(ztile);
-        }
-        */
-
         i = 1;
         j = 1;
         ref = this.znaxis;

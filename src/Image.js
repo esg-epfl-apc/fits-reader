@@ -51,6 +51,10 @@ export class Image extends DataUnit {
             }
             this.frameOffsets.push(frame);
         }
+
+        console.log("Image processing");
+        console.log(this);
+        console.log(this.buffer);
     }
 
 
@@ -219,7 +223,8 @@ export class Image extends DataUnit {
 
         // Check if bytes are in memory
         if ((buffers != null ? buffers.length : void 0) === this.nBuffers) {
-            return this._getFrameAsync(buffers, callback, opts);
+            //return this._getFrameAsync(buffers, callback, opts);
+            return this.this._getFrameSync(buffers, callback, opts);
         } else {
 
             // Read frame bytes into memory incrementally
@@ -268,6 +273,21 @@ export class Image extends DataUnit {
         }
     }
 
+    _getFrameSync(buffers, callback, opts) {
+        let pixels = null;
+        const frames = [];
+        const { bitpix, bzero, bscale } = opts;
+
+        for (let i = 0; i < buffers.length; i++) {
+            const buffer = buffers[i];
+            const frame = this._getFrame(buffer, bitpix, bzero, bscale);
+            frames.push(frame);
+        }
+
+        pixels = frames.reduce((acc, frame) => acc.concat(frame), []);
+
+        this.invoke(callback, opts, pixels);
+    }
 
     // Reads frames in a data cube in an efficient way that does not
     // overload the browser. The callback passed will be executed once for

@@ -1,6 +1,8 @@
 // Base class for FITS data units (e.g. Primary, BINTABLE, TABLE, IMAGE).  Derived classes must
 // define an instance attribute called length describing the byte length of the data unit.
-export class DataUnit {
+import {ObjUtils} from './ObjUtils'
+
+export class DataUnit extends ObjUtils {
 
     // Endian swaps are needed for performance.  All FITS images are stored in big
     // endian format, but typed arrays initialize based on the endianness of the CPU (typically little endian).
@@ -12,7 +14,7 @@ export class DataUnit {
     // arr = new Uint16Array([524])
     // value = new Uint16Array(arr.buffer)[0]
     // @littleEndian = if value is 524 then true else false
-    /*
+
     static swapEndian = {
         B: function(value) {
             return value;
@@ -25,12 +27,6 @@ export class DataUnit {
         }
     };
 
-    DataUnit.swapEndian[8] = DataUnit.swapEndian['B'];
-
-    DataUnit.swapEndian[16] = DataUnit.swapEndian['I'];
-
-    DataUnit.swapEndian[32] = DataUnit.swapEndian['J'];
-    */
 
     // Data units are initialized with the associated header and data that is either
     // 1) ArrayBuffer
@@ -38,11 +34,21 @@ export class DataUnit {
     // In the case of the array buffer, the entire file structure is already in memory.
     // The blob has not yet placed the file in memory.
     constructor(header, data) {
+        super();
+
+        DataUnit.initializeSwapEndian();
+
         if (data instanceof ArrayBuffer) {
             this.buffer = data;
         } else {
             this.blob = data;
         }
+    }
+
+    static initializeSwapEndian() {
+        DataUnit.swapEndian[8] = DataUnit.swapEndian.B;
+        DataUnit.swapEndian[16] = DataUnit.swapEndian.I;
+        DataUnit.swapEndian[32] = DataUnit.swapEndian.J;
     }
 
 }

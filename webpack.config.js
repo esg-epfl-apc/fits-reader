@@ -1,19 +1,22 @@
-/*
-const webpackConfig = {
+const path = require('path');
+
+module.exports = {
     mode: 'production',
     entry: '/src/index.js',
     output: {
-        filename: 'library-architecture.js',
-        path: 'dist',
-        library: 'LibraryArchitecture',
-        libraryTarget: 'umd',
+        filename: 'fits-reader.js',
         globalObject: 'this',
+        library: {
+            name: 'FITSReader',
+            type: 'umd',
+        },
+        path: path.resolve(__dirname, 'dist', 'fits-reader'),
     },
     module: {
         rules: [
             {
                 test: /\.js$/,
-                exclude: '../node_modules',
+                exclude: /node_modules/,
                 use: {
                     loader: 'babel-loader',
                     options: {
@@ -22,18 +25,5 @@ const webpackConfig = {
                 },
             },
         ],
-    },
-};
-*/
-
-module.exports = {
-    entry: '/src/index.js',
-    output: {
-        filename: 'fits.js',
-        library: {
-            name: 'fits-reader',
-            type: 'umd',
-        },
-        libraryTarget: 'umd',
     },
 };

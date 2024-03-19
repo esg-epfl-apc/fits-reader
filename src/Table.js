@@ -1,5 +1,5 @@
 // Class to read ASCII tables from FITS files.
-import Tabular from "./Tabular";
+import {Tabular} from "./Tabular";
 
 export class Table extends Tabular {
 

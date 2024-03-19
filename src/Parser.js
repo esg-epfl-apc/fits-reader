@@ -2,9 +2,9 @@ import {HeaderVerify} from "./HeaderVerify";
 import {Header} from "./Header";
 import {HDU} from "./HDU";
 import {Table} from "./Table";
-import BinaryTable from "./BinaryTable";
+import {BinaryTable} from "./BinaryTable";
 
-export default class Parser {
+export class Parser {
 
 
      LINEWIDTH = 80;
@@ -24,6 +24,7 @@ export default class Parser {
 
         this.file = null;
         this.length = null;
+        this.primary = true;
 
          // Number of 2880 blocks read.  This is reset every time an entire header is extracted.
          this.blockCount = 0;
@@ -51,135 +52,12 @@ export default class Parser {
          // Begin parsing for headers
          let parsing_result = this.readBlock(block);
 
-         console.log("aaaaa");
-
          if(parsing_result) {
              return this.fitsFile;
          } else {
              throw new Error("Error parsing the file");
          }
      }
-
-     /*
-    constructor(file_path, callback) {
-
-        let xhr;
-
-        this.file_path = file_path;
-        this.callback = callback;
-
-        // Set initial state for parsing buffer
-        // Blocks of 2880 will be read until an entire header is read.
-        // The process will be repeated until all headers have been parsed from file.
-
-        // Number of 2880 blocks read.  This is reset every time an entire header is extracted.
-        this.blockCount = 0;
-
-        // Byte offsets relative to the current header
-        this.begin = 0;
-        this.end = this.BLOCKLENGTH;
-
-        // Byte offset relative to the file
-        this.offset = 0;
-
-        // Initial storage for storing header while parsing.
-        this.headerStorage = new Uint8Array();
-
-        // Check the input type for either
-        // 1) Path to remote file
-        // 2) Native File object
-        if (typeof this.file_path === 'string') {
-
-            // Define function at runtime for getting next block
-            this.readNextBlock = this._readBlockFromBuffer;
-
-            // Get the remote file as an arraybuffer
-
-            this.getFileAsync();
-
-            //
-            try {
-                fetch(this.file_path, {})
-                    .then( res => this.parseFile(res));
-
-            } catch (error) {
-                this.callback(null);
-            }
-            //
-
-            //
-            xhr = new XMLHttpRequest();
-            xhr.open('GET', this.file_path);
-            xhr.responseType = 'arraybuffer';
-            xhr.onload = () => {
-
-                // Error handling on the response status
-                if (xhr.status !== 200) {
-
-                    // Execute callback returning a null object on failure
-                    this.invoke(this.callback, this.opts);
-                    return;
-                }
-
-                // Get buffer from response
-                this.arg = xhr.response;
-
-                // Store the buffer byte length
-                this.length = this.arg.byteLength;
-
-                // Begin reading buffer
-                return this.readFromBuffer();
-            };
-
-            // Send the request
-            xhr.send();
-            //
-
-        } else {
-            // Store the file byte length
-            this.length = this.arg.size;
-
-            // Define function at runtime for getting next block
-            this.readNextBlock = this._readBlockFromFile;
-
-            // Get the local file as an arraybuffer
-            this.readFromFile();
-        }
-    }
-    */
-
-     async getFileAsync() {
-         try {
-             const response = await fetch(this.file_path);
-             const arrayBuffer = await response.arrayBuffer();
-
-             await this.getFile(arrayBuffer);
-
-         } catch (error) {
-             console.error(error);
-         }
-     }
-
-    getFile() {
-
-        return fetch(this.file_path)
-         .then((response) => {
-             if (!response.ok) {
-                 throw new Error(`HTTP error, status = ${response.status}`);
-             }
-             return response.arrayBuffer();
-         })
-         .then((buffer) => this.parseFile(buffer));
-     }
-
-    parseFile(fileArrayBuffer) {
-        this.file = fileArrayBuffer;
-
-        console.log(this.file)
-
-        this.length = this.file.byteLength;
-        this.readFromBuffer();
-    }
 
     // Interpret an array buffer that is already copied in memory.  Usually
     // used for remote files, though this can be used for local files if
@@ -262,7 +140,11 @@ export default class Parser {
                     s += String.fromCharCode(value);
                 }
 
-                header = new Header(s, new HeaderVerify());
+                header = new Header(s, new HeaderVerify(this.primary));
+
+                if(this.primary === true) {
+                    this.primary = false;
+                }
 
                 // Get data unit start and length
                 this.start = this.end + this.offset;
@@ -288,15 +170,7 @@ export default class Parser {
 
                     this.headerStorage = null;
 
-                    //let fits_file = new FITSFile(this);
-
-                    //this.callback(fits_file, this);
-                    if(this.fitsFile.isValid()) {
-                        console.log("fits file");
-                        return true;
-                    } else {
-                        return false;
-                    }
+                    return true;
                 }
 
                 // Reset letiables for next header
@@ -344,7 +218,7 @@ export default class Parser {
 
         type = header.getDataType();
 
-        console.log(type);
+        console.log(type + ' Data type');
 
         //return new astro.FITS[type](header, blob);
 

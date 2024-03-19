@@ -16,20 +16,28 @@
         this.hdus.push(hdu)
     }
 
-    isValid() {
-        return true;
-    }
-
     // Returns the first HDU containing a data unit.  An optional argument may be passed to retreive
     // a specific HDU
     getHDU(index) {
+        console.log("hdus");
+        console.log(this);
+        console.log(this.hdus);
+        console.log(this.hdus[1]);
+        console.log("hdus");
+
         let hdu, j, len, ref;
+
         if ((index != null) && (this.hdus[index] != null)) {
+            console.log("hdu");
             return this.hdus[index];
         }
+
+        console.log("AAAAA");
+
         ref = this.hdus;
         for (j = 0, len = ref.length; j < len; j++) {
             hdu = ref[j];
+            console.log(hdu);
             if (hdu.hasData()) {
                 return hdu;
             }

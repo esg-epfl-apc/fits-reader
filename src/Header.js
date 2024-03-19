@@ -21,8 +21,8 @@ export class Header {
         this.headerVerify = headerVerify;
         this.supportedCards = null;
 
-        this.primary = false;
-        this.extension = false;
+        this.primary = headerVerify.primary;
+        this.extension = !this.primary;
 
         // Add verification methods to instance
         //this.verifyCard = {};
@@ -36,7 +36,7 @@ export class Header {
         */
 
         if(headerVerify != null) {
-            const propertyNames = Object.getOwnPropertyNames(Object.getPrototypeOf(headerVerify));
+            const propertyNames = Object.getOwnPropertyNames(Object.getPrototypeOf(this.headerVerify));
             this.supportedCards = propertyNames.filter(name => typeof headerVerify[name] === 'function');
         }
 
@@ -68,6 +68,7 @@ export class Header {
             value: value,
             comment: comment
         };
+
         return this.cardIndex += 1;
     }
 
@@ -117,7 +118,12 @@ export class Header {
                 value = parseFloat(value);
             }
         }
-        //value = this.validate(key, value);
+
+        console.log("CARD value");
+        console.log(key + ' ' + value);
+
+        value = this.validate(key, value);
+        //value = this.headerVerify[key](value);
         return this.set(key, value, comment);
     }
 
@@ -134,26 +140,7 @@ export class Header {
         }
 
         if (baseKey in this.supportedCards) {
-            value = this.verifyCard[baseKey](value, isArray, index);
-        }
-
-        return value;
-    }
-
-    validate_(key, value) {
-        let baseKey, index, isArray, match;
-
-        index = null;
-        baseKey = key;
-        isArray = this.arrayPattern.test(key);
-
-        if (isArray) {
-            match = this.arrayPattern.exec(key);
-            [baseKey, index] = match.slice(1);
-        }
-
-        if (baseKey in this.verifyCard) {
-            value = this.verifyCard[baseKey](value, isArray, index);
+            value = this.headerVerify[baseKey](value, isArray, index);
         }
 
         return value;
@@ -168,7 +155,6 @@ export class Header {
         for (i = j = 0, ref = nLines - 1; (0 <= ref ? j <= ref : j >= ref); i = 0 <= ref ? ++j : --j) {
             line = block.slice(i * lineWidth, (i + 1) * lineWidth);
             results.push(this.readLine(line));
-            console.log("block data");
         }
         return results;
     }
@@ -205,17 +191,21 @@ export class Header {
 
         console.log("Data type setup");
 
-        console.log(this.extensionType);
+        console.log(this.extensionType + "Extension type");
 
         if(!this.extensionType) {
             this.extensionType = null;
         }
+
+        console.log(this.cards['XTENSION'] + 'Cards extension')
 
         if(this.cards['XTENSION']) {
             console.log(this.cards['XTENSION'].value);
 
             this.extensionType = this.cards['XTENSION'].value;
         }
+
+        console.log(this.extensionType);
 
         switch (this.extensionType) {
             case 'BINTABLE':

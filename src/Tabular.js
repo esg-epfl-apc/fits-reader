@@ -1,7 +1,7 @@
 // Abstract class for tabular FITS extensions (e.g. TABLE, BINTABLE)
 import {DataUnit} from "./DataUnit";
 
-export default class Tabular extends DataUnit {
+export class Tabular extends DataUnit {
 
     // The maximum amount of memory to hold on object when
     // reading a local file. 8 MBs.

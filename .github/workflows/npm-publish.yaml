@@ -1,0 +1,24 @@
+name: Publish to npm
+
+on:
+  push:
+    branches:
+      - npm-repository
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Install npm
+        run: sudo apt-get install npm -y
+
+      - name: Publish to npm
+        env:
+          TOKEN: ${{secrets.token}}
+        run: |
+          cd dist/fits-reader
+          npm publish
