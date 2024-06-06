@@ -119,9 +119,6 @@ export class Header {
             }
         }
 
-        console.log("CARD value");
-        console.log(key + ' ' + value);
-
         value = this.validate(key, value);
         //value = this.headerVerify[key](value);
         return this.set(key, value, comment);
@@ -189,29 +186,16 @@ export class Header {
     // Determine the data unit type (e.g IMAGE, BINTABLE, TABLE, COMPRESSED)
     getDataType() {
 
-        console.log("Data type setup");
-
-        console.log(this.extensionType + "Extension type");
-
         if(!this.extensionType) {
             this.extensionType = null;
         }
 
-        console.log(this.cards['XTENSION'] + 'Cards extension')
-
         if(this.cards['XTENSION']) {
-            console.log(this.cards['XTENSION'].value);
-
             this.extensionType = this.cards['XTENSION'].value;
         }
 
-        console.log(this.extensionType);
-
         switch (this.extensionType) {
             case 'BINTABLE':
-
-                console.log("BINTABLE");
-
                 if (this.contains('ZIMAGE')) {
                     return 'CompressedImage';
                 }

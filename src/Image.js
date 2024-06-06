@@ -51,10 +51,6 @@ export class Image extends DataUnit {
             }
             this.frameOffsets.push(frame);
         }
-
-        console.log("Image processing");
-        console.log(this);
-        console.log(this.buffer);
     }
 
 

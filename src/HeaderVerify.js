@@ -30,8 +30,6 @@ export class HeaderVerify {
     }
 
     XTENSION(value) {
-        console.log("EXTENSION TYPE HF");
-        console.log(value);
         this.extension = true;
         this.extensionType = value;
         this.verifyOrder("XTENSION", 0);
@@ -41,9 +39,6 @@ export class HeaderVerify {
 
     /*
     XTENSION: function(...args) {
-                console.log("Args");
-                console.log(arguments)
-
                 this.extension = true;
                 this.extensionType = arguments[0];
                 this.verifyOrder("XTENSION", 0);

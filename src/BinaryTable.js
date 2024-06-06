@@ -1,4 +1,5 @@
 import {Tabular} from "./Tabular";
+import {DataUnit} from "./DataUnit";
 
 export class BinaryTable extends Tabular {
 
@@ -135,10 +136,18 @@ export class BinaryTable extends Tabular {
 
         // TODO: Make conditional on array type (e.g. byte arrays do not need endian swap)
         // Swap endian
+
+        /*
+        Was causing issue when dealing with larger files or large column (no heap access with smaller files I think)
+        Probably not needed with modern js since FITS file standard is big endian and javascript
+        endianess abstraction default to big endian so everything should be handled internally (but maybe I'm missing something)
+
         i = arr.length;
         while (i--) {
-            arr[i] = this.constructor.swapEndian[descriptor](arr[i]);
+            arr[i] = DataUnit.swapEndian[descriptor](arr[i]);
         }
+        */
+
         return [arr, offset];
     }
 

@@ -165,11 +165,7 @@ export class Parser {
 
                 // Return if at the end of file
                 if (this.offset === this.length) {
-
-                    console.log("parsing complete parser")
-
                     this.headerStorage = null;
-
                     return true;
                 }
 
@@ -183,7 +179,6 @@ export class Parser {
                 block = this.file.slice(this.begin + this.offset, this.end + this.offset);
 
                 // Begin parsing for next header
-                console.log("block");
                 return this.readBlock(block);
             }
 
@@ -214,11 +209,7 @@ export class Parser {
         let type;
         let data_unit = null;
 
-        console.log("Creating data unit")
-
         type = header.getDataType();
-
-        console.log(type + ' Data type');
 
         //return new astro.FITS[type](header, blob);
 
