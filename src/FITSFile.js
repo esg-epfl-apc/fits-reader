@@ -31,7 +31,7 @@
     */
 
     getHDU(hdu_index) {
-        if(hdu_index >= 0 && hdu_index < this.file.hdus.length) {
+        if(hdu_index >= 0 && hdu_index < this.hdus.length) {
             return this.hdus[hdu_index];
         } else {
             return null;
